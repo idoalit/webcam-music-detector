@@ -1,28 +1,37 @@
 import cv2
 import pygame
 import time
+import json
+
+# Load configuration from file
+with open('config.json', 'r') as f:
+    config = json.load(f)
 
 # Initialize Pygame mixer
 pygame.mixer.init()
-pygame.mixer.music.load("your_music_file.mp3")
+pygame.mixer.music.load(config["music_file"])
 
 # Set initial music volume
-initial_volume = 0.5
+initial_volume = config["initial_volume"]
 pygame.mixer.music.set_volume(initial_volume)
 
-# Initialize the webcam
-cap = cv2.VideoCapture(0)
+# Initialize the webcam with the configured camera index
+cap = cv2.VideoCapture(config["camera_index"])
 
-# Function to detect if a person is in the frame
-def person_detected(frame):
+# Load the pre-trained Haar Cascade classifier for face detection
+face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+
+# Function to detect faces and draw boundaries
+def detect_and_draw_faces(frame):
     # Convert frame to grayscale
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-    # Load the pre-trained Haar Cascade classifier for face detection
-    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     
     # Detect faces
     faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+    
+    # Draw rectangles around detected faces
+    for (x, y, w, h) in faces:
+        cv2.rectangle(frame, (x, y), (x + w, y + h), tuple(config["rectangle_color"]), config["rectangle_thickness"])
     
     # Return True if faces are detected, otherwise False
     return len(faces) > 0
@@ -30,8 +39,8 @@ def person_detected(frame):
 # Variables to control music playback
 music_playing = False
 last_person_detected_time = None
-fade_out_duration = 10  # Duration of the fade-out effect in seconds
-delay_seconds = 10  # Delay time before starting fade-out
+fade_out_duration = config["fade_out_duration"]
+delay_seconds = config["delay_seconds"]
 
 def fade_out_music(start_volume, duration):
     """Smoothly fade out the music volume."""
@@ -51,9 +60,9 @@ def play_music():
 while True:
     # Capture frame-by-frame
     ret, frame = cap.read()
-
-    # Check if a person is detected
-    if person_detected(frame):
+    
+    # Detect faces and draw boundaries
+    if detect_and_draw_faces(frame):
         if not music_playing:
             play_music()
             music_playing = True
@@ -65,8 +74,9 @@ while True:
                 fade_out_music(pygame.mixer.music.get_volume(), fade_out_duration)
                 music_playing = False
     
-    # Display the resulting frame (optional)
-    # cv2.imshow('Webcam', frame)
+    # Display the resulting frame if configured
+    if config["display_frame"]:
+        cv2.imshow('Webcam', frame)
 
     # Break the loop if 'q' is pressed
     if cv2.waitKey(1) & 0xFF == ord('q'):

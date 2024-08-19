@@ -1,0 +1,10 @@
+{
+    "initial_volume": 0.5,
+    "fade_out_duration": 10,
+    "delay_seconds": 5,
+    "music_file": "music.mp3",
+    "rectangle_thickness": 2,
+    "camera_index": 0,
+    "display_frame": false,
+    "rectangle_color": [255, 0, 0]
+}
