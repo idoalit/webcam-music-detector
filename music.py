@@ -4,9 +4,9 @@ import time
 
 # Initialize Pygame mixer
 pygame.mixer.init()
-pygame.mixer.music.load("music.mp3")
+pygame.mixer.music.load("your_music_file.mp3")
 
-# Set music volume (e.g., 0.5 for 50% volume)
+# Set initial music volume
 initial_volume = 0.5
 pygame.mixer.music.set_volume(initial_volume)
 
@@ -43,6 +43,11 @@ def fade_out_music(start_volume, duration):
         time.sleep(fade_step_duration)
     pygame.mixer.music.stop()
 
+def play_music():
+    """Play music with initial volume."""
+    pygame.mixer.music.set_volume(initial_volume)
+    pygame.mixer.music.play(-1)  # Play music in a loop
+
 while True:
     # Capture frame-by-frame
     ret, frame = cap.read()
@@ -50,7 +55,7 @@ while True:
     # Check if a person is detected
     if person_detected(frame):
         if not music_playing:
-            pygame.mixer.music.play(-1)  # Play music in a loop
+            play_music()
             music_playing = True
         # Update the last person detected time
         last_person_detected_time = time.time()
@@ -61,7 +66,7 @@ while True:
                 music_playing = False
     
     # Display the resulting frame (optional)
-    cv2.imshow('Webcam', frame)
+    # cv2.imshow('Webcam', frame)
 
     # Break the loop if 'q' is pressed
     if cv2.waitKey(1) & 0xFF == ord('q'):
