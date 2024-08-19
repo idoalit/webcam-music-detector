@@ -28,6 +28,8 @@ def person_detected(frame):
 
 # Variables to control music playback
 music_playing = False
+last_person_detected_time = None
+delay_seconds = 20  # Delay time before stopping the music
 
 while True:
     # Capture frame-by-frame
@@ -38,13 +40,16 @@ while True:
         if not music_playing:
             pygame.mixer.music.play(-1)  # Play music in a loop
             music_playing = True
+        # Update the last person detected time
+        last_person_detected_time = time.time()
     else:
         if music_playing:
-            pygame.mixer.music.stop()  # Stop the music
-            music_playing = False
+            if last_person_detected_time is not None and (time.time() - last_person_detected_time) >= delay_seconds:
+                pygame.mixer.music.stop()  # Stop the music
+                music_playing = False
     
     # Display the resulting frame (optional)
-    # cv2.imshow('Webcam', frame)
+    cv2.imshow('Webcam', frame)
 
     # Break the loop if 'q' is pressed
     if cv2.waitKey(1) & 0xFF == ord('q'):
