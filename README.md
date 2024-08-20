@@ -43,6 +43,12 @@ This Python application utilizes a webcam to detect the presence of people and p
    ```sh
    python music.py
    ```
+   
+   or use Yolo instead
+
+   ```sh
+   python yolo.py
+   ```
 2. To stop the running script, use the provided `stop.bat` file.
 
 ## Batch Files
