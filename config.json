@@ -1,10 +1,13 @@
 {
+    "model": "yolo",
     "initial_volume": 0.5,
-    "fade_out_duration": 10,
-    "delay_seconds": 5,
+    "fade_out_duration": 5,
+    "delay_seconds": 10,
     "music_file": "music.mp3",
     "rectangle_thickness": 2,
     "camera_index": 0,
-    "display_frame": false,
-    "rectangle_color": [255, 0, 0]
+    "display_frame": true,
+    "rectangle_color": [255, 0, 0],
+    "onnx_model": "yolov8n.onnx",
+    "coco_yaml": "coco8.yaml"
 }
