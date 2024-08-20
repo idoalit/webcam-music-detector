@@ -16,6 +16,7 @@ This Python application utilizes a webcam to detect the presence of people and p
 - Python 3.x
 - OpenCV
 - Pygame
+- Ultralytics YOLOv8
 
 ## Installation
 
