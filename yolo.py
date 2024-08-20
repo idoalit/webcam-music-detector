@@ -22,6 +22,16 @@ def draw_bounding_box(img, class_id, confidence, x, y, x_plus_w, y_plus_h):
     cv2.rectangle(img, (x, y), (x_plus_w, y_plus_h), color, 2)
     cv2.putText(img, label, (x - 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
+def fade_out_music(start_volume, duration):
+    """Smoothly fade out the music volume."""
+    steps = 100  # Number of steps for the fade-out
+    fade_step_duration = duration / steps
+    for step in range(steps):
+        volume = start_volume * (1 - step / steps)
+        pygame.mixer.music.set_volume(volume)
+        time.sleep(fade_step_duration)
+    pygame.mixer.music.stop()
+
 def main():
     model: cv2.dnn.Net = cv2.dnn.readNetFromONNX(config["onnx_model"])
     
@@ -92,10 +102,7 @@ def main():
                 music_playing = True
         else:
             if music_playing and (current_time - last_detection_time) > config["delay_seconds"]:
-                for i in range(100, -1, -1):
-                    pygame.mixer.music.set_volume(i / 100)
-                    time.sleep(config["fade_out_duration"] / 100)
-                pygame.mixer.music.stop()
+                fade_out_music(pygame.mixer.music.get_volume(), config["fade_out_duration"])
                 music_playing = False
 
         # Display the resulting frame if configured
